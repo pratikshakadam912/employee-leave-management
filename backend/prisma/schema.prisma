@@ -10,7 +10,6 @@ datasource db {
 enum Role {
   EMPLOYEE
   MANAGER
-  ADMIN
 }
 
 enum LeaveStatus {
@@ -19,57 +18,40 @@ enum LeaveStatus {
   REJECTED
 }
 
-enum LeaveType {
-  CASUAL
-  SICK
-  ANNUAL
-  UNPAID
-}
-
 model User {
-  id            String   @id @default(cuid())
-  employeeId    String   @unique
-  firstName     String
-  lastName      String
-  username      String   @unique
-  email         String   @unique
-  password      String
-  role          Role     @default(EMPLOYEE)
-  department    String?
-  designation   String?
-  phone         String?
-  profileImage  String?
-  joiningDate   DateTime?
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id         String   @id @default(cuid())
+  username   String   @unique
+  password   String
+  role       Role     @default(EMPLOYEE)
+
+  createdAt  DateTime @default(now())
 
   leaves         Leave[]
   notifications  Notification[]
 }
 
 model Leave {
-  id             String        @id @default(cuid())
-  startDate      DateTime
-  endDate        DateTime
-  reason         String
-  leaveType      LeaveType
-  status         LeaveStatus   @default(PENDING)
-  managerRemark  String?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  id          String        @id @default(cuid())
+  reason      String
+  startDate   DateTime
+  endDate     DateTime
+  document    String?
+  status      LeaveStatus   @default(PENDING)
+  remarks     String?
 
-  employeeId     String
-  employee       User @relation(fields: [employeeId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  employeeId  String
+  employee    User @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 }
 
 model Notification {
   id         String   @id @default(cuid())
-  title      String
   message    String
   isRead     Boolean  @default(false)
   createdAt  DateTime @default(now())
 
   userId     String
-  user       User @relation(fields: [userId], references: [id])
+  user       User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
