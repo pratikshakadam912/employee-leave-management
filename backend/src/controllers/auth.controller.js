@@ -27,7 +27,9 @@ export const login = async (req, res) => {
       ...result,
     });
   } catch (error) {
-    res.status(401).json({
+    console.error(error);
+
+    res.status(400).json({
       success: false,
       message: error.message,
     });

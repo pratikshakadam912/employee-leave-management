@@ -1,5 +1,5 @@
 import prisma from "../config/prisma.js";
-import validator from "validator";
+
 import { hashPassword, comparePassword } from "../utils/hashPassword.js";
 import { generateToken } from "../utils/generateToken.js";
 
