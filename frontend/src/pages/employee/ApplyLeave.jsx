@@ -1,5 +1,15 @@
+import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { CalendarDays, FileUp, ClipboardList, Send } from "lucide-react";
+import {
+  CalendarDays,
+  FileUp,
+  ClipboardList,
+  Send,
+  UploadCloud,
+  FileText,
+  Trash2,
+  CalendarClock,
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
@@ -10,13 +20,41 @@ export default function ApplyLeave() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  const [selectedFile, setSelectedFile] = useState(null);
+  const startDate = watch("startDate");
+  const endDate = watch("endDate");
 
+  const totalDays = useMemo(() => {
+    if (!startDate || !endDate) return 0;
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (end < start) return 0;
+
+    const diff = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
+
+    return diff + 1;
+  }, [startDate, endDate]);
+
+  const onSubmit = (data) => {
+    const formData = new FormData();
+
+    formData.append("leaveType", data.leaveType);
+    formData.append("reason", data.reason);
+    formData.append("startDate", data.startDate);
+    formData.append("endDate", data.endDate);
+
+    if (selectedFile) {
+      formData.append("document", selectedFile);
+    }
+
+    console.log(formData);
+  };
   return (
     <DashboardLayout>
       <div className="space-y-8">
@@ -67,10 +105,10 @@ export default function ApplyLeave() {
                 className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 outline-none transition focus:border-emerald-500"
               >
                 <option value="">Select Leave Type</option>
-                <option>Casual Leave</option>
-                <option>Sick Leave</option>
-                <option>Annual Leave</option>
-                <option>Unpaid Leave</option>
+                <option value="CASUAL">Casual Leave</option>
+                <option value="SICK">Sick Leave</option>
+                <option value="ANNUAL">Annual Leave</option>
+                <option value="UNPAID">Unpaid Leave</option>
               </select>
 
               <p className="mt-1 text-sm text-red-500">
@@ -107,8 +145,14 @@ export default function ApplyLeave() {
                 Duration
               </label>
 
-              <div className="flex h-[58px] items-center rounded-2xl border border-slate-200 bg-slate-50 px-5 text-slate-500">
-                Automatically calculated
+              <div className="flex h-[58px] items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-5">
+                <CalendarClock size={18} className="text-emerald-600" />
+
+                <span className="font-semibold text-emerald-700">
+                  {totalDays
+                    ? `${totalDays} Day${totalDays > 1 ? "s" : ""}`
+                    : "Select dates"}
+                </span>
               </div>
             </div>
           </div>
@@ -136,24 +180,89 @@ export default function ApplyLeave() {
           </div>
 
           {/* Upload */}
-
           <div className="mt-8">
             <label className="mb-3 flex items-center gap-2 font-semibold text-slate-700">
-              <FileUp size={18} />
+              <UploadCloud size={18} />
               Supporting Document
+              <span className="text-sm font-normal text-slate-400">
+                (Optional)
+              </span>
             </label>
 
-            <div className="rounded-3xl border-2 border-dashed border-emerald-300 bg-emerald-50 p-10 text-center transition hover:border-emerald-500">
-              <FileUp size={40} className="mx-auto text-emerald-600" />
+            <label
+              className="
+      flex
+      cursor-pointer
+      flex-col
+      items-center
+      justify-center
+      rounded-3xl
+      border-2
+      border-dashed
+      border-emerald-300
+      bg-emerald-50
+      p-10
+      transition
+      hover:border-emerald-500
+      hover:bg-emerald-100
+    "
+            >
+              <UploadCloud size={48} className="text-emerald-600" />
 
-              <h3 className="mt-4 text-lg font-bold text-slate-700">
-                Upload Supporting Document
-              </h3>
+              <h3 className="mt-4 text-xl font-bold">Drag & Drop File</h3>
 
-              <p className="mt-2 text-slate-500">PDF, JPG or PNG</p>
+              <p className="mt-2 text-slate-500">or click here to browse</p>
 
-              <input type="file" className="mt-6" />
-            </div>
+              <p className="mt-4 text-sm text-slate-400">PDF • JPG • PNG</p>
+
+              <input
+                type="file"
+                hidden
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+
+                  if (!file) return;
+
+                  if (file.size > 5 * 1024 * 1024) {
+                    alert("Maximum file size is 5MB.");
+                    return;
+                  }
+
+                  setSelectedFile(file);
+                }}
+              />
+            </label>
+
+            {selectedFile && (
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-5 flex items-center justify-between rounded-2xl border border-emerald-200 bg-white p-5 shadow-lg"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="rounded-xl bg-emerald-100 p-3">
+                    <FileText className="text-emerald-600" />
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold">{selectedFile.name}</h4>
+
+                    <p className="text-sm text-slate-500">
+                      {(selectedFile.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedFile(null)}
+                  className="rounded-xl bg-red-50 p-3 text-red-500 transition hover:bg-red-100"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </motion.div>
+            )}
           </div>
 
           {/* Buttons */}
