@@ -35,7 +35,7 @@ export default function Login() {
       toast.success("Welcome back!");
 
       if (response.user.role === "MANAGER") {
-        navigate("/admin/dashboard");
+        navigate("/manager/dashboard");
       } else {
         navigate("/employee/dashboard");
       }
