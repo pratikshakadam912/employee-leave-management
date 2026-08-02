@@ -3,7 +3,7 @@ import DashboardLayout from "../../layouts/DashboardLayout";
 import HeroBanner from "../../components/manager/HeroBanner";
 import StatsGrid from "../../components/manager/StatsGrid";
 import AnalyticsCard from "../../components/manager/AnalyticsCard";
-import RecentRequests from "../../components/manager/RecentRequests";
+//import RecentRequests from "../../components/manager/RecentRequests";
 import QuickActions from "../../components/manager/QuickActions";
 import EmployeeOverview from "../../components/manager/EmployeeOverview";
 
@@ -22,8 +22,6 @@ export default function ManagerDashboard() {
 
           <QuickActions />
         </div>
-
-        <RecentRequests />
 
         <EmployeeOverview />
       </div>
