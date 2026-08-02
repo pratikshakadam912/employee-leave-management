@@ -1,7 +1,7 @@
-import { Bell, Search, CalendarDays, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
+import { Bell, Search, CalendarDays, ChevronDown, Menu } from "lucide-react";
 
-export default function ManagerNavbar() {
+export default function ManagerNavbar({ setOpen }) {
   const today = new Date().toLocaleDateString("en-IN", {
     weekday: "long",
     day: "numeric",
@@ -11,13 +11,13 @@ export default function ManagerNavbar() {
 
   return (
     <motion.header
-      initial={{ y: -30, opacity: 0 }}
+      initial={{ y: -25, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.4 }}
       className="
       sticky
       top-0
       z-40
-      ml-[290px]
       flex
       h-24
       items-center
@@ -25,23 +25,39 @@ export default function ManagerNavbar() {
       border-b
       border-slate-200
       bg-white/90
-      px-8
-      backdrop-blur-xl
+      px-6
+      backdrop-blur-3xl
+      lg:px-8
       "
     >
-      {/* Left */}
-
-      <div>
-        <p className="text-sm text-slate-500">Welcome back 👋</p>
-
-        <h1 className="mt-1 text-3xl font-black text-slate-900">
-          Manager Dashboard
-        </h1>
-      </div>
-
-      {/* Right */}
+      {/* LEFT */}
 
       <div className="flex items-center gap-5">
+        {/* Mobile Menu */}
+
+        <button
+          onClick={() => setOpen(true)}
+          className="rounded-2xl bg-slate-100 p-3 lg:hidden"
+        >
+          <Menu size={22} />
+        </button>
+
+        <div>
+          <p className="text-sm font-medium text-slate-500">Good Morning 👋</p>
+
+          <h1 className="mt-1 text-3xl font-black text-slate-900">
+            Manager Dashboard
+          </h1>
+
+          <p className="mt-1 hidden text-sm text-slate-500 lg:block">
+            Manage leave requests, employees and reports.
+          </p>
+        </div>
+      </div>
+
+      {/* RIGHT */}
+
+      <div className="flex items-center gap-4">
         {/* Search */}
 
         <div
@@ -61,23 +77,54 @@ export default function ManagerNavbar() {
           <Search size={18} className="text-slate-400" />
 
           <input
+            type="text"
             placeholder="Search employees..."
-            className="bg-transparent outline-none"
+            className="
+            w-56
+            bg-transparent
+            text-sm
+            outline-none
+            placeholder:text-slate-400
+            "
           />
         </div>
 
         {/* Date */}
 
-        <div className="hidden xl:flex items-center gap-2 rounded-2xl bg-slate-100 px-5 py-3">
-          <CalendarDays size={18} />
+        <div
+          className="
+          hidden
+          xl:flex
+          items-center
+          gap-3
+          rounded-2xl
+          border
+          border-slate-200
+          bg-slate-50
+          px-5
+          py-3
+          "
+        >
+          <CalendarDays size={18} className="text-emerald-600" />
 
-          <span className="text-sm font-medium">{today}</span>
+          <span className="text-sm font-medium text-slate-700">{today}</span>
         </div>
 
         {/* Notification */}
 
-        <button className="relative rounded-2xl bg-slate-100 p-3 hover:bg-slate-200">
-          <Bell />
+        <button
+          className="
+          relative
+          rounded-2xl
+          border
+          border-slate-200
+          bg-slate-50
+          p-3
+          transition
+          hover:bg-slate-100
+          "
+        >
+          <Bell size={20} className="text-slate-700" />
 
           <span
             className="
@@ -103,36 +150,41 @@ export default function ManagerNavbar() {
           border
           border-slate-200
           bg-white
-          px-4
+          px-3
           py-2
+          shadow-sm
+          transition
           hover:shadow-lg
           "
         >
           <div
             className="
             flex
-            h-11
-            w-11
+            h-12
+            w-12
             items-center
             justify-center
             rounded-full
             bg-gradient-to-r
             from-emerald-500
+            via-teal-500
             to-cyan-500
+            text-lg
             font-bold
             text-white
+            shadow-lg
             "
           >
             M
           </div>
 
           <div className="hidden text-left lg:block">
-            <p className="font-semibold text-slate-900">Manager</p>
+            <h3 className="font-semibold text-slate-900">Manager</h3>
 
             <p className="text-xs text-slate-500">HR Department</p>
           </div>
 
-          <ChevronDown size={18} />
+          <ChevronDown size={18} className="hidden text-slate-500 lg:block" />
         </button>
       </div>
     </motion.header>
