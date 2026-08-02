@@ -5,7 +5,6 @@ import StatsGrid from "../../components/manager/StatsGrid";
 import AnalyticsCard from "../../components/manager/AnalyticsCard";
 import RecentRequests from "../../components/manager/RecentRequests";
 import QuickActions from "../../components/manager/QuickActions";
-import EmployeeOverview from "../../components/manager/EmployeeOverview";
 
 export default function ManagerDashboard() {
   return (
@@ -24,8 +23,6 @@ export default function ManagerDashboard() {
         </div>
 
         <RecentRequests />
-
-        <EmployeeOverview />
       </div>
     </DashboardLayout>
   );
