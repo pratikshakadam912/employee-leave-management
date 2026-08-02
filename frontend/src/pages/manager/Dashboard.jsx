@@ -1,4 +1,4 @@
-import DashboardLayout from "../../layouts/DashboardLayout";
+import ManagerLayout from "../../layouts/ManagerLayout";
 
 import HeroBanner from "../../components/manager/HeroBanner";
 import StatsGrid from "../../components/manager/StatsGrid";
@@ -8,7 +8,7 @@ import QuickActions from "../../components/manager/QuickActions";
 
 export default function ManagerDashboard() {
   return (
-    <DashboardLayout>
+    <ManagerLayout>
       <div className="space-y-8">
         <HeroBanner />
 
@@ -24,6 +24,6 @@ export default function ManagerDashboard() {
 
         <RecentRequests />
       </div>
-    </DashboardLayout>
+    </ManagerLayout>
   );
 }
