@@ -1,4 +1,7 @@
-import { getEmployeeDashboard } from "../services/employee.service.js";
+import {
+  getEmployeeDashboard,
+  applyLeave,
+} from "../services/employee.service.js";
 
 export const dashboard = async (req, res) => {
   try {
