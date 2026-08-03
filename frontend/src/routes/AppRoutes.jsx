@@ -17,6 +17,9 @@ import ManagerDashboard from "../pages/manager/Dashboard";
 import LeaveRequests from "../pages/manager/LeaveRequests";
 import Employees from "../pages/manager/Employees";
 import Reports from "../pages/manager/Reports";
+import ManagerNotifications from "../pages/manager/Notifications";
+import ManagerProfile from "../pages/manager/Profile";
+import ManagerSettings from "../pages/manager/Settings";
 
 export default function AppRoutes() {
   return (
@@ -49,13 +52,9 @@ export default function AppRoutes() {
       <Route path="/manager/employees" element={<Employees />} />
       <Route path="/manager/reports" element={<Reports />} />
 
-      {/*
-      
-      
       <Route path="/manager/notifications" element={<ManagerNotifications />} />
       <Route path="/manager/profile" element={<ManagerProfile />} />
       <Route path="/manager/settings" element={<ManagerSettings />} />
-      */}
 
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
