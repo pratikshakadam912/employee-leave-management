@@ -20,3 +20,25 @@ export const dashboard = async (req, res) => {
     });
   }
 };
+
+export const createLeave = async (req, res) => {
+  try {
+    const leave = await applyLeave(req.user.id, {
+      ...req.body,
+      document: req.file?.path || null,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Leave applied successfully.",
+      data: leave,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to apply leave.",
+    });
+  }
+};
