@@ -3,6 +3,7 @@ import prisma from "../config/prisma.js";
 
 export const protect = async (req, res, next) => {
   try {
+    // Get Authorization Header
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -12,10 +13,13 @@ export const protect = async (req, res, next) => {
       });
     }
 
+    // Extract Token
     const token = authHeader.split(" ")[1];
 
+    // Verify Token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    // Find User
     const user = await prisma.user.findUnique({
       where: {
         id: decoded.id,
@@ -34,6 +38,7 @@ export const protect = async (req, res, next) => {
       });
     }
 
+    // Attach User to Request
     req.user = user;
 
     next();
