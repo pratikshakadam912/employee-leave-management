@@ -59,3 +59,20 @@ export const getEmployeeDashboard = async (employeeId) => {
     recentLeaves,
   };
 };
+
+export const applyLeave = async (
+  employeeId,
+  { reason, startDate, endDate, document },
+) => {
+  const leave = await prisma.leave.create({
+    data: {
+      reason,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+      document,
+      employeeId,
+    },
+  });
+
+  return leave;
+};
