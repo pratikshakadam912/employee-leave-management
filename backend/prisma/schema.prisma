@@ -18,6 +18,13 @@ enum LeaveStatus {
   REJECTED
 }
 
+enum LeaveType {
+  CASUAL
+  SICK
+  ANNUAL
+  UNPAID
+}
+
 model User {
   id         String   @id @default(cuid())
   username   String   @unique
@@ -32,6 +39,7 @@ model User {
 
 model Leave {
   id          String        @id @default(cuid())
+  leaveType   LeaveType
   reason      String
   startDate   DateTime
   endDate     DateTime
