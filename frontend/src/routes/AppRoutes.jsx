@@ -16,6 +16,8 @@ import Settings from "../pages/employee/Settings";
 import ManagerDashboard from "../pages/manager/Dashboard";
 import LeaveRequests from "../pages/manager/LeaveRequests";
 import Employees from "../pages/manager/Employees";
+import Reports from "../pages/manager/Reports";
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -45,6 +47,7 @@ export default function AppRoutes() {
       <Route path="/manager/dashboard" element={<ManagerDashboard />} />
       <Route path="/manager/leave-requests" element={<LeaveRequests />} />
       <Route path="/manager/employees" element={<Employees />} />
+      <Route path="/manager/reports" element={<Reports />} />
 
       {/*
       
