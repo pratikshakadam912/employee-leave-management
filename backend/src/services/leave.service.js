@@ -5,11 +5,9 @@ export const approveLeave = async (leaveId) => {
     where: {
       id: leaveId,
     },
-
     data: {
       status: "APPROVED",
     },
-
     include: {
       employee: true,
     },
@@ -30,12 +28,10 @@ export const rejectLeave = async (leaveId, remarks) => {
     where: {
       id: leaveId,
     },
-
     data: {
       status: "REJECTED",
       remarks,
     },
-
     include: {
       employee: true,
     },
@@ -51,7 +47,6 @@ export const rejectLeave = async (leaveId, remarks) => {
   return leave;
 };
 
-// ✅ NEW
 export const getAllLeaveRequests = async () => {
   return await prisma.leave.findMany({
     include: {
@@ -63,7 +58,6 @@ export const getAllLeaveRequests = async () => {
         },
       },
     },
-
     orderBy: {
       createdAt: "desc",
     },
