@@ -18,7 +18,7 @@ export const approveLeave = async (leaveId) => {
   await prisma.notification.create({
     data: {
       userId: leave.employeeId,
-      message: `Your leave request has been approved.`,
+      message: "Your leave request has been approved.",
     },
   });
 
@@ -44,11 +44,30 @@ export const rejectLeave = async (leaveId, remarks) => {
   await prisma.notification.create({
     data: {
       userId: leave.employeeId,
-      message: `Your leave request has been rejected.`,
+      message: "Your leave request has been rejected.",
     },
   });
 
   return leave;
+};
+
+// ✅ NEW
+export const getAllLeaveRequests = async () => {
+  return await prisma.leave.findMany({
+    include: {
+      employee: {
+        select: {
+          id: true,
+          username: true,
+          email: true,
+        },
+      },
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 };
 
 export const getLeaveStats = async () => {

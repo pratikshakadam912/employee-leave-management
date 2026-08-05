@@ -1,8 +1,9 @@
-import { approveLeave, rejectLeave } from "../services/leave.service.js";
 import {
+  approveLeave,
+  rejectLeave,
   getAllLeaveRequests,
   getLeaveStats,
-} from "../services/managerLeave.service.js";
+} from "../services/leave.service.js";
 export const approve = async (req, res) => {
   try {
     const { id } = req.params;
@@ -60,6 +61,24 @@ export const leaveStats = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch leave statistics.",
+    });
+  }
+};
+
+export const getLeaves = async (req, res) => {
+  try {
+    const leaves = await getAllLeaveRequests();
+
+    res.status(200).json({
+      success: true,
+      data: leaves,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch leave requests.",
     });
   }
 };

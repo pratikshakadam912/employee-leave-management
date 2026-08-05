@@ -5,6 +5,16 @@ export const getManagerDashboard = async () => {
   return response.data;
 };
 
+export const getLeaveStats = async () => {
+  const response = await axios.get("/manager/leave-stats");
+  return response.data;
+};
+
+export const getAllLeaves = async () => {
+  const response = await axios.get("/manager/leaves");
+  return response.data;
+};
+
 export const approveLeave = async (leaveId) => {
   const response = await axios.patch(`/leave/approve/${leaveId}`);
   return response.data;
