@@ -1,58 +1,67 @@
 import { motion } from "framer-motion";
 import { Check, X, Eye, Paperclip, Clock3 } from "lucide-react";
 
-const requests = [
-  {
-    id: "EMP-1025",
-    name: "Pratiksha Kadam",
-    avatar: "P",
-    type: "Casual Leave",
-    from: "12 Aug",
-    to: "14 Aug",
-    days: 3,
-    status: "Pending",
-    applied: "Today",
-    attachment: true,
-  },
-  {
-    id: "EMP-1018",
-    name: "Rahul Sharma",
-    avatar: "R",
-    type: "Sick Leave",
-    from: "10 Aug",
-    to: "11 Aug",
-    days: 2,
-    status: "Approved",
-    applied: "Yesterday",
-    attachment: true,
-  },
-  {
-    id: "EMP-1011",
-    name: "Neha Singh",
-    avatar: "N",
-    type: "Annual Leave",
-    from: "18 Aug",
-    to: "23 Aug",
-    days: 6,
-    status: "Pending",
-    applied: "2 Days Ago",
-    attachment: false,
-  },
-  {
-    id: "EMP-1007",
-    name: "Aman Verma",
-    avatar: "A",
-    type: "Unpaid Leave",
-    from: "8 Aug",
-    to: "9 Aug",
-    days: 2,
-    status: "Rejected",
-    applied: "Last Week",
-    attachment: true,
-  },
-];
+import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+
+import {
+  getManagerDashboard,
+  approveLeave,
+  rejectLeave,
+} from "../../services/manager.service";
 
 export default function LeaveTable() {
+  const [requests, setRequests] = useState([]);
+
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  const fetchRequests = async () => {
+    try {
+      const data = await getManagerDashboard();
+
+      setRequests(data.data.recentLeaves);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleApprove = async (id) => {
+    try {
+      await approveLeave(id);
+
+      toast.success("Leave Approved");
+
+      fetchRequests();
+    } catch (error) {
+      toast.error("Failed to approve leave");
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      const remarks = prompt("Reason for rejection") || "Rejected";
+
+      await rejectLeave(id, remarks);
+
+      toast.success("Leave Rejected");
+
+      fetchRequests();
+    } catch (error) {
+      toast.error("Failed to reject leave");
+    }
+  };
+
+  const formatDate = (date) =>
+    new Date(date).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+    });
+
+  const getDays = (start, end) =>
+    Math.floor((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -96,7 +105,7 @@ export default function LeaveTable() {
           <tbody>
             {requests.map((item) => (
               <tr
-                key={item.id}
+                key={item.employee.id.slice(-6)}
                 className="border-t border-slate-100 transition hover:bg-slate-50"
               >
                 {/* Employee */}
@@ -104,12 +113,12 @@ export default function LeaveTable() {
                 <td className="px-6 py-5">
                   <div className="flex items-center gap-4">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 font-bold text-white">
-                      {item.avatar}
+                      {item.employee.username.charAt(0).toUpperCase()}
                     </div>
 
                     <div>
                       <h3 className="font-semibold text-slate-900">
-                        {item.name}
+                        {item.employee.username}
                       </h3>
 
                       <p className="text-sm text-slate-500">{item.id}</p>
@@ -121,10 +130,10 @@ export default function LeaveTable() {
 
                 <td>
                   <div>
-                    <p className="font-semibold">{item.type}</p>
+                    <p className="font-semibold">{item.reason}</p>
 
                     <span className="text-sm text-slate-500">
-                      {item.from} - {item.to}
+                      {formatDate(item.startDate)} - {formatDate(item.endDate)}
                     </span>
                   </div>
                 </td>
@@ -134,19 +143,23 @@ export default function LeaveTable() {
                 <td>
                   <div className="flex items-center gap-2">
                     <Clock3 size={17} className="text-slate-400" />
-                    {item.days} Days
+                    {getDays(item.startDate, item.endDate)} Days
                   </div>
                 </td>
 
                 {/* Status */}
 
                 <td>
-                  <StatusBadge status={item.status} />
+                  <StatusBadge
+                    status={
+                      item.status.charAt(0) + item.status.slice(1).toLowerCase()
+                    }
+                  />
                 </td>
 
                 {/* Applied */}
 
-                <td>{item.applied}</td>
+                <td>{new Date(item.createdAt).toLocaleDateString()}</td>
 
                 {/* Attachment */}
 
@@ -168,11 +181,17 @@ export default function LeaveTable() {
                       <Eye size={18} />
                     </button>
 
-                    <button className="rounded-xl bg-emerald-100 p-3 text-emerald-600 hover:bg-emerald-200">
+                    <button
+                      onClick={() => handleApprove(item.id)}
+                      className="rounded-xl bg-emerald-100 p-3 text-emerald-600 hover:bg-emerald-200"
+                    >
                       <Check size={18} />
                     </button>
 
-                    <button className="rounded-xl bg-red-100 p-3 text-red-500 hover:bg-red-200">
+                    <button
+                      onClick={() => handleReject(item.id)}
+                      className="rounded-xl bg-red-100 p-3 text-red-500 hover:bg-red-200"
+                    >
                       <X size={18} />
                     </button>
                   </div>
@@ -188,37 +207,45 @@ export default function LeaveTable() {
       <div className="space-y-5 p-5 lg:hidden">
         {requests.map((item) => (
           <div
-            key={item.id}
+            key={item.employee.id.slice(-6)}
             className="rounded-3xl border border-slate-200 p-5"
           >
             <div className="flex items-center gap-4">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 font-bold text-white">
-                {item.avatar}
+                {item.employee.username.charAt(0).toUpperCase()}
               </div>
 
               <div>
-                <h3 className="font-bold">{item.name}</h3>
+                <h3 className="font-bold">{item.employee.username}</h3>
 
-                <p className="text-sm text-slate-500">{item.id}</p>
+                <p className="text-sm text-slate-500">
+                  {item.employee.id.slice(-6)}
+                </p>
               </div>
             </div>
 
             <div className="mt-5 space-y-2 text-sm">
               <p>
-                <strong>Leave:</strong> {item.type}
+                <strong>Leave:</strong> {item.reason}
               </p>
 
               <p>
-                <strong>Duration:</strong> {item.days} Days
+                <strong>Duration:</strong>{" "}
+                {getDays(item.startDate, item.endDate)} Days
               </p>
 
               <p>
-                <strong>Dates:</strong> {item.from} - {item.to}
+                <strong>Dates:</strong> {formatDate(item.startDate)} -{" "}
+                {formatDate(item.endDate)}
               </p>
             </div>
 
             <div className="mt-5">
-              <StatusBadge status={item.status} />
+              <StatusBadge
+                status={
+                  item.status.charAt(0) + item.status.slice(1).toLowerCase()
+                }
+              />
             </div>
 
             <div className="mt-5 flex gap-3">

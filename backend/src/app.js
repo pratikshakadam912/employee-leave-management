@@ -8,6 +8,7 @@ import path from "path";
 import authRoutes from "./routes/auth.routes.js";
 import employeeRoutes from "./routes/employee.routes.js";
 import managerRoutes from "./routes/manager.routes.js";
+import leaveRoutes from "./routes/leave.routes.js";
 
 const app = express();
 
@@ -36,5 +37,6 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/employee", employeeRoutes);
 app.use("/api/manager", managerRoutes);
+app.use("/api/leave", leaveRoutes);
 
 export default app;
