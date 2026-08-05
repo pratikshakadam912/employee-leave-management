@@ -1,8 +1,12 @@
+import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
+
+import { toast } from "react-hot-toast";
+import { motion } from "framer-motion";
+
 import {
   CalendarDays,
-  FileUp,
   ClipboardList,
   Send,
   UploadCloud,
@@ -10,11 +14,12 @@ import {
   Trash2,
   CalendarClock,
 } from "lucide-react";
-import { motion } from "framer-motion";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
 import Input from "../../components/common/Input";
 import Button from "../../components/common/Button";
+
+import { applyLeave } from "../../services/employee.service";
 
 export default function ApplyLeave() {
   const {
@@ -23,6 +28,8 @@ export default function ApplyLeave() {
     watch,
     formState: { errors },
   } = useForm();
+
+  const navigate = useNavigate();
 
   const [selectedFile, setSelectedFile] = useState(null);
   const startDate = watch("startDate");
@@ -41,19 +48,29 @@ export default function ApplyLeave() {
     return diff + 1;
   }, [startDate, endDate]);
 
-  const onSubmit = (data) => {
-    const formData = new FormData();
+  const onSubmit = async (data) => {
+    try {
+      const formData = new FormData();
 
-    formData.append("leaveType", data.leaveType);
-    formData.append("reason", data.reason);
-    formData.append("startDate", data.startDate);
-    formData.append("endDate", data.endDate);
+      formData.append("leaveType", data.leaveType);
+      formData.append("reason", data.reason);
+      formData.append("startDate", data.startDate);
+      formData.append("endDate", data.endDate);
 
-    if (selectedFile) {
-      formData.append("document", selectedFile);
+      if (selectedFile) {
+        formData.append("document", selectedFile);
+      }
+
+      await applyLeave(formData);
+
+      toast.success("Leave applied successfully!");
+
+      navigate("/employee/dashboard");
+    } catch (error) {
+      console.error(error);
+
+      toast.error(error.response?.data?.message || "Failed to apply leave.");
     }
-
-    console.log(formData);
   };
   return (
     <DashboardLayout>

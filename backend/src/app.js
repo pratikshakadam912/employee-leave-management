@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import path from "path";
 
 import authRoutes from "./routes/auth.routes.js";
 import employeeRoutes from "./routes/employee.routes.js";
@@ -11,7 +12,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "http://localhost:5174"],
     credentials: true,
   }),
 );
@@ -20,6 +21,9 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
+
+// Serve uploaded files
+app.use("/uploads", express.static(path.resolve("uploads")));
 
 app.get("/", (req, res) => {
   res.json({
@@ -30,4 +34,5 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/employee", employeeRoutes);
+
 export default app;
