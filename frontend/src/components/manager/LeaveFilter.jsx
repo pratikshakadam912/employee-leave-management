@@ -1,7 +1,36 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Filter, CalendarDays, RotateCcw } from "lucide-react";
 
-export default function LeaveFilter() {
+export default function LeaveFilter({ onFilter }) {
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+  const [type, setType] = useState("");
+  const [date, setDate] = useState("");
+
+  const applyFilters = () => {
+    onFilter({
+      search,
+      status,
+      type,
+      date,
+    });
+  };
+
+  const resetFilters = () => {
+    setSearch("");
+    setStatus("");
+    setType("");
+    setDate("");
+
+    onFilter({
+      search: "",
+      status: "",
+      type: "",
+      date: "",
+    });
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -26,6 +55,8 @@ export default function LeaveFilter() {
           <input
             type="text"
             placeholder="Search employee, ID or department..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             className="
             w-full
             rounded-2xl
@@ -47,6 +78,8 @@ export default function LeaveFilter() {
         {/* Status */}
 
         <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
           className="
           rounded-2xl
           border
@@ -60,15 +93,17 @@ export default function LeaveFilter() {
           focus:border-emerald-500
           "
         >
-          <option>All Status</option>
-          <option>Pending</option>
-          <option>Approved</option>
-          <option>Rejected</option>
+          <option value="">All Status</option>
+          <option value="PENDING">Pending</option>
+          <option value="APPROVED">Approved</option>
+          <option value="REJECTED">Rejected</option>
         </select>
 
         {/* Leave Type */}
 
         <select
+          value={type}
+          onChange={(e) => setType(e.target.value)}
           className="
           rounded-2xl
           border
@@ -82,14 +117,14 @@ export default function LeaveFilter() {
           focus:border-emerald-500
           "
         >
-          <option>All Types</option>
-          <option>Casual Leave</option>
-          <option>Sick Leave</option>
-          <option>Annual Leave</option>
-          <option>Unpaid Leave</option>
+          <option value="">All Types</option>
+          <option value="Casual Leave">Casual Leave</option>
+          <option value="Sick Leave">Sick Leave</option>
+          <option value="Annual Leave">Annual Leave</option>
+          <option value="Unpaid Leave">Unpaid Leave</option>
         </select>
 
-        {/* Date Range */}
+        {/* Date */}
 
         <div
           className="
@@ -106,12 +141,18 @@ export default function LeaveFilter() {
         >
           <CalendarDays size={18} className="text-emerald-600" />
 
-          <input type="date" className="bg-transparent text-sm outline-none" />
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="bg-transparent text-sm outline-none"
+          />
         </div>
 
         {/* Reset */}
 
         <button
+          onClick={resetFilters}
           className="
           flex
           items-center
@@ -133,9 +174,10 @@ export default function LeaveFilter() {
           Reset
         </button>
 
-        {/* Filter */}
+        {/* Apply */}
 
         <button
+          onClick={applyFilters}
           className="
           flex
           items-center

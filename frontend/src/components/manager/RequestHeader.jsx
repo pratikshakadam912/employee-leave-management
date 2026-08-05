@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { ClipboardCheck, Clock3, CheckCircle2, XCircle } from "lucide-react";
 
-export default function RequestHeader() {
+export default function RequestHeader({ stats }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 25 }}
@@ -46,19 +46,31 @@ export default function RequestHeader() {
         {/* Right */}
 
         <div className="grid grid-cols-2 gap-5">
-          <MiniCard icon={<Clock3 size={26} />} value="18" label="Pending" />
+          <MiniCard
+            icon={<Clock3 size={26} />}
+            value={stats?.pending ?? 0}
+            label="Pending"
+          />
 
           <MiniCard
             icon={<CheckCircle2 size={26} />}
-            value="126"
+            value={stats?.approved ?? 0}
             label="Approved"
           />
 
-          <MiniCard icon={<XCircle size={26} />} value="11" label="Rejected" />
+          <MiniCard
+            icon={<XCircle size={26} />}
+            value={stats?.rejected ?? 0}
+            label="Rejected"
+          />
 
           <MiniCard
             icon={<ClipboardCheck size={26} />}
-            value="155"
+            value={
+              (stats?.pending ?? 0) +
+              (stats?.approved ?? 0) +
+              (stats?.rejected ?? 0)
+            }
             label="Total"
           />
         </div>

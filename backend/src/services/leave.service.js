@@ -54,7 +54,6 @@ export const getAllLeaveRequests = async () => {
         select: {
           id: true,
           username: true,
-          email: true,
         },
       },
     },

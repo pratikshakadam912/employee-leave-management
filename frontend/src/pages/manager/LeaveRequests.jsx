@@ -13,6 +13,7 @@ export default function LeaveRequests() {
   const [requests, setRequests] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [filteredRequests, setFilteredRequests] = useState([]);
 
   const fetchData = async () => {
     try {
@@ -22,6 +23,7 @@ export default function LeaveRequests() {
       ]);
 
       setRequests(leaveRes.data);
+      setFilteredRequests(leaveRes.data);
       setStats(statsRes.data);
     } catch (error) {
       console.error(error);
@@ -33,6 +35,42 @@ export default function LeaveRequests() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleFilter = ({ search, status, type, date }) => {
+    let data = [...requests];
+
+    // Search by employee name or ID
+    if (search) {
+      const value = search.toLowerCase();
+
+      data = data.filter(
+        (item) =>
+          item.employee.username.toLowerCase().includes(value) ||
+          item.id.toLowerCase().includes(value),
+      );
+    }
+
+    // Status
+    if (status) {
+      data = data.filter((item) => item.status === status);
+    }
+
+    // Leave Type
+    if (type) {
+      data = data.filter((item) => item.reason === type);
+    }
+
+    // Start Date
+    if (date) {
+      const selected = new Date(date).toDateString();
+
+      data = data.filter(
+        (item) => new Date(item.startDate).toDateString() === selected,
+      );
+    }
+
+    setFilteredRequests(data);
+  };
 
   if (loading) {
     return (
@@ -47,13 +85,13 @@ export default function LeaveRequests() {
   return (
     <ManagerLayout role="manager">
       <div className="space-y-8">
-        <RequestHeader />
+        <RequestHeader stats={stats} />
 
         <LeaveStats stats={stats} />
 
-        <LeaveFilter />
+        <LeaveFilter onFilter={handleFilter} />
 
-        <LeaveTable requests={requests} refreshData={fetchData} />
+        <LeaveTable requests={filteredRequests} refreshData={fetchData} />
       </div>
     </ManagerLayout>
   );
