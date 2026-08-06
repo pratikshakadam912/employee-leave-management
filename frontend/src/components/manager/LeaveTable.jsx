@@ -4,9 +4,13 @@ import { Check, X, Eye, Paperclip, Clock3 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 import { approveLeave, rejectLeave } from "../../services/manager.service";
+import LeaveDetailsModal from "./LeaveDetailsModal";
 
 export default function LeaveTable({ requests = [], refreshData }) {
   const [loadingId, setLoadingId] = useState(null);
+
+  const [selectedLeave, setSelectedLeave] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
 
   const formatDate = (date) =>
     new Date(date).toLocaleDateString("en-IN", {
@@ -56,6 +60,11 @@ export default function LeaveTable({ requests = [], refreshData }) {
     } finally {
       setLoadingId(null);
     }
+  };
+
+  const handleView = (leave) => {
+    setSelectedLeave(leave);
+    setOpenModal(true);
   };
 
   return (
@@ -184,7 +193,10 @@ export default function LeaveTable({ requests = [], refreshData }) {
 
                   <td>
                     <div className="flex justify-center gap-2">
-                      <button className="rounded-xl bg-blue-100 p-3 text-blue-600 hover:bg-blue-200">
+                      <button
+                        onClick={() => handleView(item)}
+                        className="rounded-xl bg-blue-100 p-3 text-blue-600 hover:bg-blue-200"
+                      >
                         <Eye size={18} />
                       </button>
 
@@ -260,7 +272,10 @@ export default function LeaveTable({ requests = [], refreshData }) {
 
             {item.status === "PENDING" && (
               <div className="mt-5 flex gap-3">
-                <button className="flex-1 rounded-2xl bg-blue-500 py-3 font-semibold text-white">
+                <button
+                  onClick={() => handleView(item)}
+                  className="flex-1 rounded-2xl bg-blue-500 py-3 font-semibold text-white"
+                >
                   View
                 </button>
 
@@ -282,6 +297,14 @@ export default function LeaveTable({ requests = [], refreshData }) {
           </div>
         ))}
       </div>
+
+      <LeaveDetailsModal
+        open={openModal}
+        leave={selectedLeave}
+        onClose={() => setOpenModal(false)}
+        onApprove={handleApprove}
+        onReject={handleReject}
+      />
     </motion.div>
   );
 }

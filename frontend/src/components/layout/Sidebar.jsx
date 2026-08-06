@@ -6,11 +6,10 @@ import {
   User,
   Settings,
   LogOut,
-  Menu,
   X,
 } from "lucide-react";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const menu = [
   {
@@ -46,6 +45,15 @@ const menu = [
 ];
 
 export default function Sidebar({ open, setOpen }) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/login");
+  };
+
   return (
     <>
       {/* Mobile */}
@@ -94,6 +102,7 @@ export default function Sidebar({ open, setOpen }) {
               <NavLink
                 key={item.name}
                 to={item.path}
+                onClick={() => setOpen(false)}
                 className={({ isActive }) =>
                   `
                   flex items-center gap-4
@@ -120,20 +129,21 @@ export default function Sidebar({ open, setOpen }) {
 
           <div className="mt-auto p-5">
             <button
+              onClick={handleLogout}
               className="
-                flex
-                w-full
-                items-center
-                justify-center
-                gap-3
-                rounded-2xl
-                bg-red-50
-                py-4
-                font-semibold
-                text-red-500
-                transition
-                hover:bg-red-100
-              "
+    flex
+    w-full
+    items-center
+    justify-center
+    gap-3
+    rounded-2xl
+    bg-red-50
+    py-4
+    font-semibold
+    text-red-500
+    transition
+    hover:bg-red-100
+  "
             >
               <LogOut />
               Logout
