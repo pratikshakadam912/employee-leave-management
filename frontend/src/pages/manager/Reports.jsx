@@ -4,7 +4,7 @@ import ManagerLayout from "../../layouts/ManagerLayout";
 import ReportsHeader from "../../components/manager/ReportsHeader";
 import ReportStats from "../../components/manager/ReportStats";
 import LeaveTrendChart from "../../components/manager/LeaveTrendChart";
-import DepartmentChart from "../../components/manager/DepartmentChart";
+import LeaveStatusChart from "../../components/manager/LeaveStatusChart";
 import LeaveTypeChart from "../../components/manager/LeaveTypeChart";
 import TopEmployees from "../../components/manager/TopEmployees";
 
@@ -54,7 +54,7 @@ export default function Reports() {
           <LeaveTypeChart data={reports} />
         </div>
 
-        <DepartmentChart data={reports} />
+        <LeaveStatusChart data={reports} />
 
         <TopEmployees data={reports} />
       </div>
