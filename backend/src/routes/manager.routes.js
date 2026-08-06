@@ -4,6 +4,7 @@ import {
   dashboard,
   employees,
   reports,
+  departmentReport,
 } from "../controllers/manager.controller.js";
 import { getLeaves, leaveStats } from "../controllers/leave.controller.js";
 
@@ -19,5 +20,6 @@ router.get("/leave-stats", protect, authorize("MANAGER"), leaveStats);
 router.get("/leaves", protect, authorize("MANAGER"), getLeaves);
 router.get("/employees", protect, authorize("MANAGER"), employees);
 router.get("/reports", reports);
+router.get("/reports/departments", departmentReport);
 
 export default router;

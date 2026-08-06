@@ -11,22 +11,9 @@ import {
 import { motion } from "framer-motion";
 import { TrendingUp } from "lucide-react";
 
-const data = [
-  { month: "Jan", leaves: 18 },
-  { month: "Feb", leaves: 25 },
-  { month: "Mar", leaves: 20 },
-  { month: "Apr", leaves: 34 },
-  { month: "May", leaves: 28 },
-  { month: "Jun", leaves: 42 },
-  { month: "Jul", leaves: 36 },
-  { month: "Aug", leaves: 48 },
-  { month: "Sep", leaves: 44 },
-  { month: "Oct", leaves: 38 },
-  { month: "Nov", leaves: 30 },
-  { month: "Dec", leaves: 40 },
-];
+export default function LeaveTrendChart({ data }) {
+  const chartData = data?.monthlyTrend || [];
 
-export default function LeaveTrendChart() {
   return (
     <motion.div
       initial={{ opacity: 0, y: 25 }}
@@ -55,7 +42,7 @@ export default function LeaveTrendChart() {
 
       <div className="h-[360px]">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
+          <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" />
 
             <XAxis

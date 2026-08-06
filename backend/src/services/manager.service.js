@@ -259,3 +259,32 @@ export const getReportsData = async () => {
     topEmployees,
   };
 };
+
+export const getDepartmentReport = async () => {
+  const employees = await prisma.user.findMany({
+    where: {
+      role: "EMPLOYEE",
+    },
+    include: {
+      leaves: true,
+    },
+  });
+
+  const departments = {};
+
+  employees.forEach((emp) => {
+    // Until you add a department field in User model
+    const department = "Development";
+
+    if (!departments[department]) {
+      departments[department] = 0;
+    }
+
+    departments[department] += emp.leaves.length;
+  });
+
+  return Object.entries(departments).map(([dept, leaves]) => ({
+    dept,
+    leaves,
+  }));
+};

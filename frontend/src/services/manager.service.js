@@ -37,3 +37,13 @@ export const getReports = async () => {
   const response = await axios.get("/manager/reports");
   return response.data;
 };
+
+export const getDepartmentReport = async () => {
+  const response = await axios.get("/manager/reports/departments");
+  return response.data;
+};
+
+export const getReportsData = async () => {
+  const response = await axios.get("/manager/reports");
+  return response.data;
+};

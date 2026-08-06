@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ResponsiveContainer,
@@ -8,18 +9,27 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-
 import { Building2 } from "lucide-react";
 
-const data = [
-  { dept: "HR", leaves: 12 },
-  { dept: "IT", leaves: 34 },
-  { dept: "Sales", leaves: 22 },
-  { dept: "Finance", leaves: 17 },
-  { dept: "Marketing", leaves: 20 },
-];
+import { getReportsData } from "../../services/manager.service";
 
 export default function DepartmentChart() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const res = await getReportsData();
+
+      setData(res.data.departmentStats || []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 25 }}
@@ -43,13 +53,13 @@ export default function DepartmentChart() {
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="4 4" />
 
-            <XAxis dataKey="dept" />
+            <XAxis dataKey="department" />
 
             <YAxis />
 
             <Tooltip />
 
-            <Bar dataKey="leaves" radius={[12, 12, 0, 0]} fill="#10B981" />
+            <Bar dataKey="leaves" fill="#10B981" radius={[12, 12, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
