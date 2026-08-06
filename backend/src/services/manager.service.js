@@ -103,5 +103,159 @@ export const getAllEmployees = async () => {
 };
 
 export const getReportsData = async () => {
-  // We'll build this next.
+  // Total employees
+  const totalEmployees = await prisma.user.count({
+    where: {
+      role: "EMPLOYEE",
+    },
+  });
+
+  // Leave counts
+  const totalLeaves = await prisma.leave.count();
+
+  const approvedLeaves = await prisma.leave.count({
+    where: {
+      status: "APPROVED",
+    },
+  });
+
+  const pendingLeaves = await prisma.leave.count({
+    where: {
+      status: "PENDING",
+    },
+  });
+
+  const rejectedLeaves = await prisma.leave.count({
+    where: {
+      status: "REJECTED",
+    },
+  });
+
+  // Leave Type Distribution
+  const casualLeaves = await prisma.leave.count({
+    where: {
+      leaveType: "CASUAL",
+    },
+  });
+
+  const sickLeaves = await prisma.leave.count({
+    where: {
+      leaveType: "SICK",
+    },
+  });
+
+  const annualLeaves = await prisma.leave.count({
+    where: {
+      leaveType: "ANNUAL",
+    },
+  });
+
+  const unpaidLeaves = await prisma.leave.count({
+    where: {
+      leaveType: "UNPAID",
+    },
+  });
+
+  // Monthly Leave Trend (Current Year)
+  const currentYear = new Date().getFullYear();
+
+  const monthly = [];
+
+  for (let month = 0; month < 12; month++) {
+    const start = new Date(currentYear, month, 1);
+
+    const end = new Date(currentYear, month + 1, 1);
+
+    const count = await prisma.leave.count({
+      where: {
+        createdAt: {
+          gte: start,
+          lt: end,
+        },
+      },
+    });
+
+    monthly.push({
+      month: start.toLocaleString("default", {
+        month: "short",
+      }),
+      leaves: count,
+    });
+  }
+
+  // Department Statistics
+  const departments = ["Development", "HR", "Marketing", "Finance"];
+
+  const departmentStats = await Promise.all(
+    departments.map(async (department) => {
+      const count = await prisma.user.count({
+        where: {
+          role: "EMPLOYEE",
+          department,
+        },
+      });
+
+      return {
+        department,
+        employees: count,
+      };
+    }),
+  );
+
+  // Top Employees
+  const employees = await prisma.user.findMany({
+    where: {
+      role: "EMPLOYEE",
+    },
+
+    include: {
+      leaves: true,
+    },
+  });
+
+  const topEmployees = employees
+    .map((emp) => ({
+      id: emp.id,
+      username: emp.username,
+      totalLeaves: emp.leaves.length,
+      approvedLeaves: emp.leaves.filter((leave) => leave.status === "APPROVED")
+        .length,
+    }))
+    .sort((a, b) => b.approvedLeaves - a.approvedLeaves)
+    .slice(0, 5);
+
+  return {
+    stats: {
+      totalEmployees,
+      totalLeaves,
+      approvedLeaves,
+      pendingLeaves,
+      rejectedLeaves,
+    },
+
+    leaveTrend: monthly,
+
+    leaveTypes: [
+      {
+        name: "Casual",
+        value: casualLeaves,
+      },
+      {
+        name: "Sick",
+        value: sickLeaves,
+      },
+      {
+        name: "Annual",
+        value: annualLeaves,
+      },
+      {
+        name: "Unpaid",
+        value: unpaidLeaves,
+      },
+    ],
+
+    departments: departmentStats,
+
+    topEmployees,
+  };
 };
