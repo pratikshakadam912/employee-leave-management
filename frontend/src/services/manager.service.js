@@ -27,3 +27,8 @@ export const rejectLeave = async (leaveId, remarks) => {
 
   return response.data;
 };
+
+export const getEmployees = async () => {
+  const response = await axios.get("/manager/employees");
+  return response.data;
+};

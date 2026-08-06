@@ -1,50 +1,46 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, Pencil, Mail, Phone, BadgeCheck } from "lucide-react";
 
-const employees = [
-  {
-    id: "EMP-1001",
-    name: "Rahul Sharma",
-    email: "rahul@pulsehr.com",
-    phone: "+91 9876543210",
-    department: "Development",
-    role: "Frontend Developer",
-    leaveBalance: 12,
-    status: "Active",
-  },
-  {
-    id: "EMP-1002",
-    name: "Priya Singh",
-    email: "priya@pulsehr.com",
-    phone: "+91 9876543211",
-    department: "Human Resource",
-    role: "HR Executive",
-    leaveBalance: 8,
-    status: "On Leave",
-  },
-  {
-    id: "EMP-1003",
-    name: "Amit Patel",
-    email: "amit@pulsehr.com",
-    phone: "+91 9876543212",
-    department: "Marketing",
-    role: "Marketing Manager",
-    leaveBalance: 15,
-    status: "Active",
-  },
-  {
-    id: "EMP-1004",
-    name: "Sneha Joshi",
-    email: "sneha@pulsehr.com",
-    phone: "+91 9876543213",
-    department: "Finance",
-    role: "Accountant",
-    leaveBalance: 10,
-    status: "Inactive",
-  },
-];
+import { getEmployees } from "../../services/manager.service";
 
 export default function EmployeesTable() {
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadEmployees();
+  }, []);
+
+  const loadEmployees = async () => {
+    try {
+      const res = await getEmployees();
+
+      // supports both
+      // {success:true,data:[...]}
+      // or [...]
+      setEmployees(res.data || res);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="rounded-[30px] bg-white p-10 shadow-lg"
+      >
+        <div className="flex items-center justify-center py-20">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -83,28 +79,31 @@ export default function EmployeesTable() {
                 <td className="py-6">
                   <div className="flex items-center gap-4">
                     <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-lg font-bold text-white">
-                      {employee.name
-                        .split(" ")
+                      {employee.username
+                        ?.split(" ")
                         .map((n) => n[0])
-                        .join("")}
+                        .join("")
+                        .toUpperCase()}
                     </div>
 
                     <div>
                       <h3 className="font-bold text-slate-900">
-                        {employee.name}
+                        {employee.username}
                       </h3>
 
-                      <p className="text-sm text-slate-500">{employee.id}</p>
+                      <p className="text-sm text-slate-500">
+                        EMP-{employee.id.slice(0, 6).toUpperCase()}
+                      </p>
 
                       <div className="mt-2 flex flex-col gap-1 text-xs text-slate-500">
                         <span className="flex items-center gap-1">
                           <Mail size={13} />
-                          {employee.email}
+                          {employee.email || "Not Available"}
                         </span>
 
                         <span className="flex items-center gap-1">
                           <Phone size={13} />
-                          {employee.phone}
+                          {employee.phone || "Not Available"}
                         </span>
                       </div>
                     </div>
@@ -112,7 +111,7 @@ export default function EmployeesTable() {
                 </td>
 
                 <td className="font-medium text-slate-700">
-                  {employee.department}
+                  {employee.department || "General"}
                 </td>
 
                 <td>
@@ -123,21 +122,21 @@ export default function EmployeesTable() {
 
                 <td>
                   <span className="font-bold text-emerald-600">
-                    {employee.leaveBalance} Days
+                    {employee.leaveBalance ?? 0} Days
                   </span>
                 </td>
 
                 <td>
                   <span
                     className={`rounded-full px-4 py-2 text-sm font-semibold ${
-                      employee.status === "Active"
+                      employee.status === "ACTIVE"
                         ? "bg-emerald-100 text-emerald-700"
-                        : employee.status === "On Leave"
+                        : employee.status === "ON_LEAVE"
                           ? "bg-yellow-100 text-yellow-700"
                           : "bg-red-100 text-red-700"
                     }`}
                   >
-                    {employee.status}
+                    {employee.status || "ACTIVE"}
                   </span>
                 </td>
 
@@ -158,6 +157,14 @@ export default function EmployeesTable() {
                 </td>
               </tr>
             ))}
+
+            {employees.length === 0 && (
+              <tr>
+                <td colSpan="6" className="py-16 text-center text-slate-500">
+                  No employees found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

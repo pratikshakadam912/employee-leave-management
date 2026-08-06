@@ -58,3 +58,46 @@ export const getManagerDashboard = async () => {
     recentLeaves,
   };
 };
+
+export const getAllEmployees = async () => {
+  const employees = await prisma.user.findMany({
+    where: {
+      role: "EMPLOYEE",
+    },
+
+    include: {
+      leaves: true,
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return employees.map((emp) => {
+    const approvedLeaves = emp.leaves.filter(
+      (leave) => leave.status === "APPROVED",
+    ).length;
+
+    const pendingLeaves = emp.leaves.filter(
+      (leave) => leave.status === "PENDING",
+    ).length;
+
+    return {
+      id: emp.id,
+      username: emp.username,
+      role: emp.role,
+      createdAt: emp.createdAt,
+
+      totalLeaves: emp.leaves.length,
+
+      approvedLeaves,
+
+      pendingLeaves,
+
+      leaveBalance: 20 - approvedLeaves,
+
+      status: pendingLeaves > 0 ? "On Leave" : "Active",
+    };
+  });
+};

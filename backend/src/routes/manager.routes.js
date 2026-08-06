@@ -1,6 +1,6 @@
 import express from "express";
 
-import { dashboard } from "../controllers/manager.controller.js";
+import { dashboard, employess } from "../controllers/manager.controller.js";
 import { getLeaves, leaveStats } from "../controllers/leave.controller.js";
 
 import { protect } from "../middleware/auth.middleware.js";
@@ -13,5 +13,5 @@ router.get("/dashboard", protect, authorize("MANAGER"), dashboard);
 router.get("/leave-stats", protect, authorize("MANAGER"), leaveStats);
 
 router.get("/leaves", protect, authorize("MANAGER"), getLeaves);
-
+router.get("/employees", protect, authorize("MANAGER"), employees);
 export default router;
