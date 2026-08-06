@@ -1,6 +1,6 @@
 import express from "express";
 
-import { dashboard, employess } from "../controllers/manager.controller.js";
+import { dashboard, employees } from "../controllers/manager.controller.js";
 import { getLeaves, leaveStats } from "../controllers/leave.controller.js";
 
 import { protect } from "../middleware/auth.middleware.js";
