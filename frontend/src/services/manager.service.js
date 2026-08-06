@@ -32,3 +32,8 @@ export const getEmployees = async () => {
   const response = await axios.get("/manager/employees");
   return response.data;
 };
+
+export const getReports = async () => {
+  const response = await axios.get("/manager/reports");
+  return response.data;
+};

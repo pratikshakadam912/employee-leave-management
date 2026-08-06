@@ -101,3 +101,7 @@ export const getAllEmployees = async () => {
     };
   });
 };
+
+export const getReportsData = async () => {
+  // We'll build this next.
+};

@@ -1,6 +1,7 @@
 import {
   getManagerDashboard,
   getAllEmployees,
+  getReportsData,
 } from "../services/manager.service.js";
 
 export const dashboard = async (req, res) => {
@@ -35,6 +36,23 @@ export const employees = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch employees",
+    });
+  }
+};
+export const reports = async (req, res) => {
+  try {
+    const data = await getReportsData();
+
+    res.json({
+      success: true,
+      data,
+    });
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch reports",
     });
   }
 };
