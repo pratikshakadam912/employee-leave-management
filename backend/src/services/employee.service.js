@@ -78,3 +78,51 @@ export const applyLeave = async (
 
   return leave;
 };
+
+export const getEmployeeLeaveHistory = async (userId) => {
+  return await prisma.leave.findMany({
+    where: {
+      employeeId: userId,
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
+export const getEmployeeNotifications = async (userId) => {
+  return await prisma.notification.findMany({
+    where: {
+      userId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
+export const getEmployeeProfile = async (userId) => {
+  return prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      id: true,
+      username: true,
+      role: true,
+      createdAt: true,
+    },
+  });
+};
+
+export const updateEmployeeProfile = async (userId, data) => {
+  return prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      username: data.username,
+    },
+  });
+};

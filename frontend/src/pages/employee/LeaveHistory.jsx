@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { History, Search, Clock3, CheckCircle2, XCircle } from "lucide-react";
-
+import { useEffect } from "react";
+import { getLeaveHistory } from "../../services/employee.service";
+import { History, Search } from "lucide-react";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import HistoryFilters from "../../components/history/HistoryFilters";
 import LeaveCard from "../../components/history/LeaveCard";
@@ -11,53 +12,44 @@ export default function LeaveHistory() {
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [search, setSearch] = useState("");
 
-  // Dummy Data
-  const leaves = [
-    {
-      id: 1,
-      leaveType: "Sick Leave",
-      reason: "High fever and body pain",
-      startDate: "12 Aug 2026",
-      endDate: "14 Aug 2026",
-      days: 3,
-      status: "PENDING",
-      remarks: "Waiting for manager review",
-      document: true,
-    },
-    {
-      id: 2,
-      leaveType: "Annual Leave",
-      reason: "Family vacation",
-      startDate: "01 Jul 2026",
-      endDate: "05 Jul 2026",
-      days: 5,
-      status: "APPROVED",
-      remarks: "Approved. Enjoy!",
-      document: false,
-    },
-    {
-      id: 3,
-      leaveType: "Casual Leave",
-      reason: "Personal work",
-      startDate: "18 Jun 2026",
-      endDate: "18 Jun 2026",
-      days: 1,
-      status: "REJECTED",
-      remarks: "Project deadline this week.",
-      document: false,
-    },
-  ];
+  const [leaves, setLeaves] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  const fetchHistory = async () => {
+    try {
+      const res = await getLeaveHistory();
+      setLeaves(res.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredLeaves = leaves.filter((leave) => {
     const matchesSearch =
-      leave.leaveType.toLowerCase().includes(search.toLowerCase()) ||
-      leave.reason.toLowerCase().includes(search.toLowerCase());
+      (leave.leaveType || "").toLowerCase().includes(search.toLowerCase()) ||
+      (leave.reason || "").toLowerCase().includes(search.toLowerCase());
 
     const matchesFilter =
       activeFilter === "ALL" || leave.status === activeFilter;
 
     return matchesSearch && matchesFilter;
   });
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex h-[70vh] items-center justify-center">
+          <h2 className="text-xl font-semibold">Loading...</h2>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>

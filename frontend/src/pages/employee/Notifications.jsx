@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Bell,
@@ -10,42 +10,43 @@ import {
 } from "lucide-react";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
+import { getNotifications } from "../../services/employee.service";
 
 export default function Notifications() {
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: "APPROVED",
-      title: "Leave Approved",
-      message: "Your Annual Leave has been approved.",
-      time: "2 mins ago",
-      read: false,
-    },
-    {
-      id: 2,
-      type: "PENDING",
-      title: "Leave Submitted",
-      message: "Your leave request has been submitted successfully.",
-      time: "Yesterday",
-      read: false,
-    },
-    {
-      id: 3,
-      type: "REJECTED",
-      title: "Leave Rejected",
-      message: "Reason: Project deadline this week.",
-      time: "2 Days Ago",
-      read: true,
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      const res = await getNotifications();
+      setNotifications(res.data || []);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const markAllRead = () => {
     setNotifications((prev) =>
       prev.map((item) => ({
         ...item,
-        read: true,
+        isRead: true,
       })),
     );
+  };
+
+  const getType = (message = "") => {
+    const text = message.toLowerCase();
+
+    if (text.includes("approved")) return "APPROVED";
+    if (text.includes("rejected")) return "REJECTED";
+
+    return "PENDING";
   };
 
   const icon = {
@@ -90,63 +91,69 @@ export default function Notifications() {
 
         {/* Button */}
 
-        <div className="flex justify-end">
-          <button
-            onClick={markAllRead}
-            className="flex items-center gap-2 rounded-2xl bg-emerald-600 px-5 py-3 font-semibold text-white transition hover:bg-emerald-700"
-          >
-            <CheckCheck size={18} />
-            Mark All Read
-          </button>
-        </div>
-
-        {/* Notifications */}
-
-        <div className="space-y-5">
-          {notifications.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="rounded-[28px] bg-white p-16 text-center shadow-lg"
+        {notifications.length > 0 && (
+          <div className="flex justify-end">
+            <button
+              onClick={markAllRead}
+              className="flex items-center gap-2 rounded-2xl bg-emerald-600 px-5 py-3 font-semibold text-white transition hover:bg-emerald-700"
             >
-              <Bell size={55} className="mx-auto text-slate-300" />
+              <CheckCheck size={18} />
+              Mark All Read
+            </button>
+          </div>
+        )}
 
-              <h2 className="mt-5 text-2xl font-bold text-slate-700">
-                No Notifications
-              </h2>
+        {/* Loading */}
 
-              <p className="mt-2 text-slate-500">You're all caught up.</p>
-            </motion.div>
-          ) : (
-            notifications.map((item) => (
-              <motion.div
-                key={item.id}
-                initial={{
-                  opacity: 0,
-                  y: 20,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                whileHover={{
-                  y: -4,
-                }}
-                className={`rounded-[28px] border p-6 shadow-lg transition hover:shadow-2xl ${bg[item.type]}`}
-              >
-                <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+        {loading ? (
+          <div className="rounded-[28px] bg-white p-16 text-center shadow-lg">
+            <h2 className="text-xl font-bold">Loading...</h2>
+          </div>
+        ) : notifications.length === 0 ? (
+          /* Empty */
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="rounded-[28px] bg-white p-16 text-center shadow-lg"
+          >
+            <Bell size={55} className="mx-auto text-slate-300" />
+
+            <h2 className="mt-5 text-2xl font-bold text-slate-700">
+              No Notifications
+            </h2>
+
+            <p className="mt-2 text-slate-500">You're all caught up.</p>
+          </motion.div>
+        ) : (
+          <div className="space-y-5">
+            {notifications.map((item) => {
+              const type = getType(item.message);
+
+              return (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -4 }}
+                  className={`rounded-[28px] border p-6 shadow-lg transition hover:shadow-2xl ${bg[type]}`}
+                >
                   <div className="flex gap-4">
                     <div className="rounded-2xl bg-white p-3 shadow">
-                      {icon[item.type]}
+                      {icon[type]}
                     </div>
 
-                    <div>
+                    <div className="flex-1">
                       <div className="flex flex-wrap items-center gap-3">
                         <h2 className="text-xl font-bold text-slate-800">
-                          {item.title}
+                          {type === "APPROVED"
+                            ? "Leave Approved"
+                            : type === "REJECTED"
+                              ? "Leave Rejected"
+                              : "Notification"}
                         </h2>
 
-                        {!item.read && (
+                        {!item.isRead && (
                           <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-bold text-white">
                             NEW
                           </span>
@@ -157,16 +164,15 @@ export default function Notifications() {
 
                       <div className="mt-4 flex items-center gap-2 text-sm text-slate-500">
                         <CalendarDays size={16} />
-
-                        {item.time}
+                        {new Date(item.createdAt).toLocaleString()}
                       </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            ))
-          )}
-        </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

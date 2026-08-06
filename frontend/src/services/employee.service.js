@@ -1,12 +1,9 @@
 import api from "../utils/axios";
 
-// =========================
 // Employee Dashboard
-// =========================
 
 export const getEmployeeDashboard = async () => {
   const response = await api.get("/employee/dashboard");
-
   return response.data.data;
 };
 
@@ -19,5 +16,26 @@ export const applyLeave = async (formData) => {
     },
   });
 
+  return response.data;
+};
+
+export const getLeaveHistory = async () => {
+  const response = await api.get("/employee/leave-history");
+  return response.data;
+};
+
+export const getNotifications = async () => {
+  const response = await api.get("/employee/notifications");
+
+  return response.data;
+};
+
+export const getProfile = async () => {
+  const response = await api.get("/employee/profile");
+  return response.data;
+};
+
+export const updateProfile = async (data) => {
+  const response = await api.put("/employee/profile", data);
   return response.data;
 };
