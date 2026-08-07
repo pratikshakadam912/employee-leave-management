@@ -13,19 +13,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      const allowedOrigins = [
-        process.env.CLIENT_URL,
-        "http://localhost:5173",
-        "http://localhost:5174",
-      ];
-
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: [process.env.CLIENT_URL, "http://localhost:5173"],
     credentials: true,
   }),
 );

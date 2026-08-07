@@ -4,8 +4,8 @@ import prisma from "../config/prisma.js";
 export const protect = async (req, res, next) => {
   try {
     console.log("========== AUTH ==========");
-    console.log("JWT_SECRET exists:", !!process.env.JWT_SECRET);
     console.log("Authorization:", req.headers.authorization);
+    console.log("JWT_SECRET exists:", !!process.env.JWT_SECRET);
 
     const authHeader = req.headers.authorization;
 

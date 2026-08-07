@@ -19,13 +19,7 @@ const router = express.Router();
 router.get("/dashboard", protect, authorize("EMPLOYEE"), dashboard);
 
 // Apply Leave
-router.post(
-  "/apply-leave",
-  protect,
-  authorize("EMPLOYEE"),
-  upload.single("document"), // uploads directly to Cloudinary
-  createLeave,
-);
+router.post("/apply-leave", protect, authorize("EMPLOYEE"), createLeave);
 
 // Leave History
 router.get("/leave-history", protect, authorize("EMPLOYEE"), getLeaveHistory);
