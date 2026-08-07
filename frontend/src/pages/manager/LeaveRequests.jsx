@@ -46,7 +46,8 @@ export default function LeaveRequests() {
       data = data.filter(
         (item) =>
           item.employee.username.toLowerCase().includes(value) ||
-          item.id.toLowerCase().includes(value),
+          item.id.toLowerCase().includes(value) ||
+          item.leaveType.toLowerCase().includes(value),
       );
     }
 

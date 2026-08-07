@@ -82,6 +82,20 @@ export default function LeaveDetailsModal({
               value={`${days} Day${days > 1 ? "s" : ""}`}
             />
 
+            {leave.document && (
+              <div className="md:col-span-2">
+                <a
+                  href={leave.document}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-blue-100 px-5 py-3 font-semibold text-blue-700 transition hover:bg-blue-200"
+                >
+                  <FileText size={18} />
+                  View Supporting Document
+                </a>
+              </div>
+            )}
+
             <Info icon={<Clock3 />} label="Status" value={leave.status} />
           </div>
 
@@ -93,21 +107,23 @@ export default function LeaveDetailsModal({
             </div>
           )}
 
-          <div className="mt-8 flex justify-end gap-4">
-            <button
-              onClick={() => onReject(leave.id)}
-              className="rounded-2xl bg-red-500 px-6 py-3 font-semibold text-white"
-            >
-              Reject
-            </button>
+          {leave.status === "PENDING" && (
+            <div className="mt-8 flex justify-end gap-4">
+              <button
+                onClick={() => onReject(leave.id)}
+                className="rounded-2xl bg-red-500 px-6 py-3 font-semibold text-white transition hover:bg-red-600"
+              >
+                Reject
+              </button>
 
-            <button
-              onClick={() => onApprove(leave.id)}
-              className="rounded-2xl bg-emerald-500 px-6 py-3 font-semibold text-white"
-            >
-              Approve
-            </button>
-          </div>
+              <button
+                onClick={() => onApprove(leave.id)}
+                className="rounded-2xl bg-emerald-500 px-6 py-3 font-semibold text-white transition hover:bg-emerald-600"
+              >
+                Approve
+              </button>
+            </div>
+          )}
         </motion.div>
       </motion.div>
     </AnimatePresence>

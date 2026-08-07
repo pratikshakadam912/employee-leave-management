@@ -1,49 +1,30 @@
 import multer from "multer";
-import path from "path";
-import fs from "fs";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import cloudinary from "../config/cloudinary.js";
 
-// Create uploads folder if it doesn't exist
-const uploadPath = "uploads";
-
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath);
-}
-
-// Storage configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadPath);
-  },
-
-  filename: (req, file, cb) => {
-    const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9);
-
-    cb(null, uniqueName + path.extname(file.originalname));
-  },
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: async (req, file) => ({
+    folder: "PulseHR/documents",
+    resource_type: "auto",
+    allowed_formats: ["pdf", "jpg", "jpeg", "png"],
+    public_id: `${Date.now()}-${file.originalname.split(".")[0]}`,
+  }),
 });
-
-// Allow only these file types
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = [
-    "application/pdf",
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
-  ];
-
-  if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only PDF, JPG and PNG files are allowed."));
-  }
-};
 
 const upload = multer({
   storage,
-  fileFilter,
-
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    const allowed = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
+
+    if (allowed.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only PDF, JPG and PNG files are allowed."));
+    }
   },
 });
 

@@ -27,10 +27,15 @@ export const dashboard = async (req, res) => {
 
 export const createLeave = async (req, res) => {
   try {
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+
     const leave = await applyLeave(req.user.id, {
       ...req.body,
       document: req.file?.path || null,
     });
+
+    console.log("DOCUMENT:", req.file?.path);
 
     res.status(201).json({
       success: true,
@@ -43,10 +48,10 @@ export const createLeave = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to apply leave.",
+      error: error.message,
     });
   }
 };
-
 export const getLeaveHistory = async (req, res) => {
   try {
     const leaves = await getEmployeeLeaveHistory(req.user.id);

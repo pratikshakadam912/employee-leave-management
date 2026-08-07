@@ -3,7 +3,6 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import path from "path";
 
 import authRoutes from "./routes/auth.routes.js";
 import employeeRoutes from "./routes/employee.routes.js";
@@ -27,9 +26,6 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
-
-// Serve uploaded files
-app.use("/uploads", express.static(path.resolve("uploads")));
 
 app.get("/", (req, res) => {
   res.json({

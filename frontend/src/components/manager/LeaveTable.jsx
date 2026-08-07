@@ -177,15 +177,16 @@ export default function LeaveTable({ requests = [], refreshData }) {
                   <td>
                     {item.document ? (
                       <a
-                        href={`http://localhost:5000/${item.document}`}
+                        href={item.document}
                         target="_blank"
-                        rel="noreferrer"
-                        className="rounded-xl bg-slate-100 p-3 hover:bg-slate-200 inline-flex"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-xl bg-emerald-100 px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-200"
                       >
-                        <Paperclip size={18} />
+                        <Paperclip size={16} />
+                        View
                       </a>
                     ) : (
-                      "-"
+                      <span className="text-slate-400">No Document</span>
                     )}
                   </td>
 
@@ -263,6 +264,22 @@ export default function LeaveTable({ requests = [], refreshData }) {
               <p>
                 <strong>Dates:</strong> {formatDate(item.startDate)} -{" "}
                 {formatDate(item.endDate)}
+              </p>
+
+              <p>
+                <strong>Document:</strong>{" "}
+                {item.document ? (
+                  <a
+                    href={item.document}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-emerald-600 underline"
+                  >
+                    View Document
+                  </a>
+                ) : (
+                  "No Document"
+                )}
               </p>
             </div>
 
