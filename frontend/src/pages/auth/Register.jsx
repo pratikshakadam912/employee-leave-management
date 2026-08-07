@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { UserPlus, ArrowRight } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { useState } from "react";
 
 import AuthLayout from "../../layouts/AuthLayout";

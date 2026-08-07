@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.json({
     success: true,
-    message: "🚀 PulseHR Backend Running Successfully",
+    message: "🚀  Backend Running Successfully",
   });
 });
 

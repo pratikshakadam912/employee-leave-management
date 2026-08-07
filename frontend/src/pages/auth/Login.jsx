@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { LogIn, ArrowRight } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { useState } from "react";
 
 import AuthLayout from "../../layouts/AuthLayout";
@@ -32,15 +32,19 @@ export default function Login() {
 
       login(response.user, response.token);
 
-      toast.success("Welcome back!");
+      toast.success(response.message || "Login successful!");
 
-      if (response.user.role === "MANAGER") {
-        navigate("/manager/dashboard");
-      } else {
-        navigate("/employee/dashboard");
-      }
+      setTimeout(() => {
+        if (response.user.role === "MANAGER") {
+          navigate("/manager/dashboard");
+        } else {
+          navigate("/employee/dashboard");
+        }
+      }, 800);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Login failed.");
+      toast.error(
+        error.response?.data?.message || "Invalid username or password.",
+      );
     } finally {
       setLoading(false);
     }
