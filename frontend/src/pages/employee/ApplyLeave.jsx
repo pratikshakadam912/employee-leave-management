@@ -48,43 +48,20 @@ export default function ApplyLeave() {
     return diff + 1;
   }, [startDate, endDate]);
 
-  const uploadToCloudinary = async (file) => {
-    const formData = new FormData();
-
-    formData.append("file", file);
-    formData.append(
-      "upload_preset",
-      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
-    );
-
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/auto/upload`,
-      {
-        method: "POST",
-        body: formData,
-      },
-    );
-
-    const data = await response.json();
-
-    return data.secure_url;
-  };
-
   const onSubmit = async (data) => {
     try {
-      let documentUrl = null;
+      const formData = new FormData();
+
+      formData.append("leaveType", data.leaveType);
+      formData.append("reason", data.reason);
+      formData.append("startDate", data.startDate);
+      formData.append("endDate", data.endDate);
 
       if (selectedFile) {
-        documentUrl = await uploadToCloudinary(selectedFile);
+        formData.append("document", selectedFile);
       }
 
-      await applyLeave({
-        leaveType: data.leaveType,
-        reason: data.reason,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        document: documentUrl,
-      });
+      await applyLeave(formData);
 
       toast.success("Leave applied successfully!");
 
