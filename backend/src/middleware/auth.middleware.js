@@ -49,3 +49,4 @@ export const protect = async (req, res, next) => {
     });
   }
 };
+console.log("JWT_SECRET exists:", !!process.env.JWT_SECRET);
