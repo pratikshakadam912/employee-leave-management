@@ -32,7 +32,7 @@ export const createLeave = async (req, res) => {
 
     const leave = await applyLeave(req.user.id, {
       ...req.body,
-      document: req.file?.path || null,
+      document: req.file ? req.file.path : null,
     });
 
     console.log("DOCUMENT:", req.file?.path);

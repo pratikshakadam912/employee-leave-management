@@ -49,6 +49,7 @@ export const getEmployeeDashboard = async (employeeId) => {
       endDate: true,
       status: true,
       createdAt: true,
+      document: true,
     },
   });
 
