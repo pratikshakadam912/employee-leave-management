@@ -8,7 +8,7 @@ import AuthLayout from "../../layouts/AuthLayout";
 import Input from "../../components/common/Input";
 import Button from "../../components/common/Button";
 
-import { loginUser } from "../../services/authservice";
+import { loginUser } from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Login() {

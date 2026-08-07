@@ -8,7 +8,7 @@ import AuthLayout from "../../layouts/AuthLayout";
 import Input from "../../components/common/Input";
 import Button from "../../components/common/Button";
 
-import { registerUser } from "../../services/authservice";
+import { registerUser } from "../../services/authService";
 
 export default function Register() {
   const navigate = useNavigate();
