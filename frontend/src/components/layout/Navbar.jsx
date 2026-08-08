@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Bell, Moon, Menu, Search, Sun } from "lucide-react";
 
 import { useAuth } from "../../context/AuthContext";
 
 export default function Navbar({ setOpen, onSearch }) {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isDark, setIsDark] = useState(false);
@@ -150,6 +152,7 @@ export default function Navbar({ setOpen, onSearch }) {
           {/* Notifications */}
           <button
             type="button"
+            onClick={() => navigate("/employee/notifications")}
             className="
               relative
               rounded-2xl
