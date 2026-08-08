@@ -66,13 +66,24 @@ export const applyLeave = async (
   employeeId,
   { leaveType, reason, startDate, endDate, document },
 ) => {
+  console.log("========== SERVICE: APPLY LEAVE ==========");
+  console.log({
+    employeeId,
+    leaveType,
+    reason,
+    startDate,
+    endDate,
+    document,
+    documentType: typeof document,
+  });
+
   const leave = await prisma.leave.create({
     data: {
       leaveType,
       reason,
       startDate: new Date(startDate),
       endDate: new Date(endDate),
-      document: document || null,
+      document: typeof document === "string" ? document : null,
       employeeId,
     },
   });

@@ -50,11 +50,6 @@ export default function ApplyLeave() {
 
   const onSubmit = async (data) => {
     try {
-      if (new Date(data.endDate) < new Date(data.startDate)) {
-        toast.error("End date cannot be before start date.");
-        return;
-      }
-
       const formData = new FormData();
 
       formData.append("leaveType", data.leaveType);
@@ -63,17 +58,48 @@ export default function ApplyLeave() {
       formData.append("endDate", data.endDate);
 
       if (selectedFile) {
-        formData.append("document", selectedFile, selectedFile.name);
+        formData.append("document", selectedFile);
       }
 
-      await applyLeave(formData);
+      console.log("========== APPLY LEAVE FRONTEND ==========");
+      console.log("Leave Type:", data.leaveType);
+      console.log("Reason:", data.reason);
+      console.log("Start Date:", data.startDate);
+      console.log("End Date:", data.endDate);
+      console.log("File:", selectedFile);
+
+      for (const [key, value] of formData.entries()) {
+        console.log(
+          key,
+          value instanceof File
+            ? {
+                name: value.name,
+                type: value.type,
+                size: value.size,
+              }
+            : value,
+        );
+      }
+
+      const response = await applyLeave(formData);
+
+      console.log("APPLY LEAVE RESPONSE:", response);
 
       toast.success("Leave applied successfully!");
+
       navigate("/employee/dashboard");
     } catch (error) {
       console.error("APPLY LEAVE FRONTEND ERROR:", error);
 
-      toast.error(error.response?.data?.message || "Failed to apply leave.");
+      console.error("Status:", error.response?.status);
+      console.error("Response:", error.response?.data);
+      console.error("Message:", error.message);
+
+      toast.error(
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Failed to apply leave.",
+      );
     }
   };
 

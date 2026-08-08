@@ -4,12 +4,17 @@ import cloudinary from "../config/cloudinary.js";
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: async (req, file) => ({
-    folder: "PulseHR/documents",
-    resource_type: "auto",
-    allowed_formats: ["pdf", "jpg", "jpeg", "png"],
-    public_id: `${Date.now()}-${file.originalname.split(".")[0]}`,
-  }),
+  params: async (req, file) => {
+    const extension = file.originalname.split(".").pop().toLowerCase();
+
+    return {
+      folder: "PulseHR/documents",
+      resource_type: extension === "pdf" ? "raw" : "image",
+      public_id: `${Date.now()}-${file.originalname
+        .replace(/\.[^/.]+$/, "")
+        .replace(/[^a-zA-Z0-9-_]/g, "-")}`,
+    };
+  },
 });
 
 const upload = multer({
