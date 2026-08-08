@@ -72,7 +72,7 @@ export const applyLeave = async (
       reason,
       startDate: new Date(startDate),
       endDate: new Date(endDate),
-      document,
+      document: document || null,
       employeeId,
     },
   });
