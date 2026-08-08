@@ -7,9 +7,8 @@ export const getEmployeeDashboard = async () => {
 };
 
 // Apply Leave
-export const applyLeave = async (data) => {
-  const response = await api.post("/employee/apply-leave", data);
-
+export const applyLeave = async (formData) => {
+  const response = await api.post("/employee/apply-leave", formData);
   return response.data;
 };
 

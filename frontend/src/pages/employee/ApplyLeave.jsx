@@ -50,6 +50,11 @@ export default function ApplyLeave() {
 
   const onSubmit = async (data) => {
     try {
+      if (new Date(data.endDate) < new Date(data.startDate)) {
+        toast.error("End date cannot be before start date.");
+        return;
+      }
+
       const formData = new FormData();
 
       formData.append("leaveType", data.leaveType);
@@ -58,20 +63,20 @@ export default function ApplyLeave() {
       formData.append("endDate", data.endDate);
 
       if (selectedFile) {
-        formData.append("document", selectedFile);
+        formData.append("document", selectedFile, selectedFile.name);
       }
 
       await applyLeave(formData);
 
       toast.success("Leave applied successfully!");
-
       navigate("/employee/dashboard");
     } catch (error) {
-      console.error(error);
+      console.error("APPLY LEAVE FRONTEND ERROR:", error);
 
       toast.error(error.response?.data?.message || "Failed to apply leave.");
     }
   };
+
   return (
     <DashboardLayout>
       <div className="space-y-8">

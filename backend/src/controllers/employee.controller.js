@@ -28,18 +28,47 @@ export const dashboard = async (req, res) => {
 export const createLeave = async (req, res) => {
   try {
     console.log("========== APPLY LEAVE ==========");
-    console.log("USER:", req.user);
+    console.log("CONTENT TYPE:", req.headers["content-type"]);
     console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
 
-    const leave = await applyLeave(req.user.id, {
-      leaveType: req.body.leaveType,
-      reason: req.body.reason,
-      startDate: req.body.startDate,
-      endDate: req.body.endDate,
-      document: req.body.document || null,
+    if (!req.body) {
+      return res.status(400).json({
+        success: false,
+        message: "Request body is undefined",
+        contentType: req.headers["content-type"],
+      });
+    }
+
+    const { leaveType, reason, startDate, endDate } = req.body;
+
+    console.log({
+      leaveType,
+      reason,
+      startDate,
+      endDate,
     });
 
-    console.log("DOCUMENT URL:", req.body.document || "No document");
+    if (!leaveType || !reason || !startDate || !endDate) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required leave fields.",
+        received: {
+          leaveType,
+          reason,
+          startDate,
+          endDate,
+        },
+      });
+    }
+
+    const leave = await applyLeave(req.user.id, {
+      leaveType,
+      reason,
+      startDate,
+      endDate,
+      document: req.file?.path || null,
+    });
 
     return res.status(201).json({
       success: true,
@@ -57,7 +86,6 @@ export const createLeave = async (req, res) => {
     });
   }
 };
-
 export const getLeaveHistory = async (req, res) => {
   try {
     const leaves = await getEmployeeLeaveHistory(req.user.id);
